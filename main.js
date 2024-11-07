@@ -5,6 +5,11 @@ var toolTip = d3.tip()
         return "<h5>"+d.id+"</h5>"
     });
 
+var drag = d3.drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
+    
 var svg = d3.select('svg');
 svg.call(toolTip);
 var width = +svg.attr('width');
@@ -14,21 +19,12 @@ var colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 var linkScale = d3.scaleSqrt().range([1,5]);
 
 
-var drag = d3.drag()
-    .on('start', dragstarted)
-    .on('drag', dragged)
-    .on('end', dragended);
+
 
 d3.json('les_miserables.json').then(function(dataset) {
     console.log(dataset);
     network = dataset;
     linkScale.domain(d3.extent(network.links, function(d){ return d.value;}));
-
-    var linkG = svg.append('g')
-        .attr('class', 'links-group');
-
-    var nodeG = svg.append('g')
-        .attr('class', 'nodes-group');
 
     var simulation = d3.forceSimulation()
         .force('link', d3.forceLink().id(function(d) { return d.id; }))
@@ -40,6 +36,14 @@ d3.json('les_miserables.json').then(function(dataset) {
     
     simulation.force('link')
         .links(dataset.links);
+
+
+    var linkG = svg.append('g')
+        .attr('class', 'links-group');
+
+    var nodeG = svg.append('g')
+        .attr('class', 'nodes-group');
+
 
     var linkEnter = linkG.selectAll('.link')
         .data(network.links)
@@ -60,7 +64,7 @@ d3.json('les_miserables.json').then(function(dataset) {
             return colorScale(d.group);
         });
     nodeEnter.call(drag);
-    
+
     nodeEnter.on('mouseover', toolTip.show)
     .on('mouseout', toolTip.hide);
 
@@ -81,7 +85,7 @@ d3.json('les_miserables.json').then(function(dataset) {
 
 
 function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    if (!d3.event.active) simulation.alphaTarget(1).restart();
     d.fx = d.x;
     d.fy = d.y;
 }
