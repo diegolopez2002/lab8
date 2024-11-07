@@ -52,21 +52,22 @@ d3.json('les_miserables.json').then(function(dataset) {
             return colorScale(d.group);
         });
     nodeEnter.call(drag);
+
+    function tickSimulation() {
+        linkEnter
+            .attr('x1', function(d) { return d.source.x;})
+            .attr('y1', function(d) { return d.source.y;})
+            .attr('x2', function(d) { return d.target.x;})
+            .attr('y2', function(d) { return d.target.y;});
+    
+        nodeEnter
+            .attr('cx', function(d) { return d.x;})
+            .attr('cy', function(d) { return d.y;});
+    }
     
 
 });
 
-function tickSimulation() {
-    linkEnter
-        .attr('x1', function(d) { return d.source.x;})
-        .attr('y1', function(d) { return d.source.y;})
-        .attr('x2', function(d) { return d.target.x;})
-        .attr('y2', function(d) { return d.target.y;});
-
-    nodeEnter
-        .attr('cx', function(d) { return d.x;})
-        .attr('cy', function(d) { return d.y;});
-}
 
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
