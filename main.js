@@ -1,4 +1,12 @@
+var toolTip = d3.tip()
+    .attr("class", "d3-tip")
+    .offset([-12, 0])
+    .html(function(d) {
+        return "<h5>"+d.id+"</h5>"
+    });
+
 var svg = d3.select('svg');
+svg.call(toolTip);
 var width = +svg.attr('width');
 var height = +svg.attr('height');
 
@@ -52,6 +60,9 @@ d3.json('les_miserables.json').then(function(dataset) {
             return colorScale(d.group);
         });
     nodeEnter.call(drag);
+    
+    nodeEnter.on('mouseover', toolTip.show)
+    .on('mouseout', toolTip.hide);
 
     function tickSimulation() {
         linkEnter
