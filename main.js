@@ -5,6 +5,12 @@ var height = +svg.attr('height');
 var colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 var linkScale = d3.scaleSqrt().range([1,5]);
 
+var drag = d3.drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
+
+
 var simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(function(d) { return d.id; }))
     .force('charge', d3.forceManyBody())
@@ -35,6 +41,8 @@ var nodeEnter = nodeG.selectAll('.node')
         return colorScale(d.group);
     });
 
+    nodeEnter.call(drag);
+
 function tickSimulation() {
     linkEnter
         .attr('x1', function(d) { return d.source.x;})
@@ -61,3 +69,20 @@ d3.json('les_miserables.json').then(function(dataset) {
         .attr('class', 'nodes-group');
 
 });
+
+function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+
+function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+}
+
+function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+}
