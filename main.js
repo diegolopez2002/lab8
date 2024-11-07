@@ -5,12 +5,6 @@ var height = +svg.attr('height');
 var colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 var linkScale = d3.scaleSqrt().range([1,5]);
 
-var drag = d3.drag()
-    .on('start', dragstarted)
-    .on('drag', dragged)
-    .on('end', dragended);
-
-
 var simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(function(d) { return d.id; }))
     .force('charge', d3.forceManyBody())
@@ -55,6 +49,10 @@ function tickSimulation() {
         .attr('cy', function(d) { return d.y;});
 }
 
+var drag = d3.drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
 
 d3.json('les_miserables.json').then(function(dataset) {
     console.log(dataset);
